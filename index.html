@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1e7e34">
+    <meta name="description" content="İstanbul Sultanbeyli 2026 Ramazan İmsakiyesi">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="./manifest.json">
+    <title>Ramazan İmsakiyesi 2026 - Sultanbeyli</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e7e34 0%, #155724 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border-bottom: 3px solid rgba(255, 215, 0, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 0.3rem;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header .subtitle {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        /* Bugünün Kartı - Büyük */
+        .today-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 215, 0, 0.15) 100%);
+            padding: 1.5rem;
+            margin: 1.5rem 1rem;
+            border-radius: 16px;
+            border: 3px solid #ffd700;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .today-header {
+            text-align: center;
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        .day-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #155724;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin: 0 auto 1rem;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+
+        .day-badge::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 2rem;
+        }
+
+        .day-badge.kadir::before {
+            content: '⭐';
+        }
+
+        .day-badge.arefe::before {
+            content: '🌙';
+        }
+
+        /* Geri Sayım */
+        .countdown-section {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .countdown-title {
+            font-size: 1.3rem;
+            color: #ffd700;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .countdown-item {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            min-width: 80px;
+        }
+
+        .countdown-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #ffd700;
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+
+        .countdown-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+        }
+
+        .countdown-date {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+        }
+
+        .today-title {
+            font-size: 1.1rem;
+            color: #ffd700;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .today-date {
+            font-size: 1rem;
+            opacity: 0.95;
+            font-weight: 600;
+        }
+
+        .today-times {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .today-time {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.6rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .today-time.highlight {
+            background: rgba(255, 165, 0, 0.3);
+            border-color: rgba(255, 165, 0, 0.6);
+        }
+
+        .today-time-label {
+            font-size: 0.7rem;
+            opacity: 0.9;
+            margin-bottom: 0.3rem;
+        }
+
+        .today-time-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        /* İmsakiye Tablosu */
+        .imsakiye-container {
+            padding: 0 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .imsakiye-header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 12px 12px 0 0;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-bottom: none;
+        }
+
+        .imsakiye-header h2 {
+            text-align: center;
+            color: #ffd700;
+            font-size: 1.2rem;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 70px repeat(6, 1fr);
+            gap: 0.3rem;
+            padding: 0.8rem 0.5rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-top: none;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-align: center;
+            color: #ffd700;
+        }
+
+        .day-row {
+            display: grid;
+            grid-template-columns: 70px repeat(6, 1fr);
+            gap: 0.3rem;
+            padding: 0.8rem 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-top: none;
+            font-size: 0.8rem;
+            text-align: center;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .day-row:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .day-row:last-child {
+            border-radius: 0 0 12px 12px;
+        }
+
+        .day-row.current-day {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 215, 0, 0.15) 100%);
+            border: 2px solid rgba(255, 215, 0, 0.7);
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+            font-size: 0.85rem;
+        }
+
+        .day-cell {
+            padding: 0.3rem;
+        }
+
+        .day-number {
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        .special-icon {
+            font-size: 1.1rem;
+            margin-left: 0.2rem;
+        }
+
+        .time-cell {
+            font-weight: 600;
+        }
+
+        .current-day .time-cell {
+            color: #ffd700;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .table-header,
+            .day-row {
+                font-size: 0.7rem;
+                padding: 0.6rem 0.3rem;
+                gap: 0.2rem;
+            }
+
+            .today-times {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
+
+            .day-badge {
+                width: 60px;
+                height: 60px;
+                font-size: 1.4rem;
+            }
+
+            .today-title {
+                font-size: 0.9rem;
+            }
+
+            .countdown-timer {
+                gap: 0.5rem;
+            }
+
+            .countdown-item {
+                min-width: 70px;
+                padding: 0.8rem;
+            }
+
+            .countdown-number {
+                font-size: 2rem;
+            }
+
+            .countdown-label {
+                font-size: 0.7rem;
+            }
+
+            .table-header,
+            .day-row {
+                grid-template-columns: 50px repeat(6, 1fr);
+                font-size: 0.65rem;
+                padding: 0.5rem 0.2rem;
+            }
+
+            .current-day {
+                font-size: 0.7rem;
+            }
+
+            .today-time-value {
+                font-size: 1rem;
+            }
+
+            .today-time-label {
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🌙 Ramazan İmsakiyesi 2026</h1>
+        <div class="subtitle">İstanbul - Sultanbeyli</div>
+    </header>
+
+    <!-- Bugünün Vakitleri -->
+    <div class="today-card" id="todayCard">
+        <!-- JavaScript ile doldurulacak -->
+    </div>
+
+    <!-- İmsakiye Tablosu -->
+    <div class="imsakiye-container">
+        <div class="imsakiye-header">
+            <h2>📅 Tam İmsakiye</h2>
+        </div>
+        <div class="table-header">
+            <div>Gün</div>
+            <div>İmsak</div>
+            <div>Güneş</div>
+            <div>Öğle</div>
+            <div>İkindi</div>
+            <div>Akşam</div>
+            <div>Yatsı</div>
+        </div>
+        <div id="imsakiyeRows"></div>
+    </div>
+
+    <script>
+        // 2026 Ramazan İmsakiyesi - İstanbul Sultanbeyli
+        const ramazanData = [
+            { day: 1, date: '19 Şubat', imsak: '06:22', gunes: '07:48', ogle: '13:23', ikindi: '16:19', aksam: '18:49', yatsi: '20:09' },
+            { day: 2, date: '20 Şubat', imsak: '06:21', gunes: '07:47', ogle: '13:23', ikindi: '16:20', aksam: '18:50', yatsi: '20:10' },
+            { day: 3, date: '21 Şubat', imsak: '06:19', gunes: '07:45', ogle: '13:23', ikindi: '16:22', aksam: '18:51', yatsi: '20:11' },
+            { day: 4, date: '22 Şubat', imsak: '06:18', gunes: '07:44', ogle: '13:23', ikindi: '16:23', aksam: '18:53', yatsi: '20:12' },
+            { day: 5, date: '23 Şubat', imsak: '06:16', gunes: '07:42', ogle: '13:23', ikindi: '16:25', aksam: '18:54', yatsi: '20:14' },
+            { day: 6, date: '24 Şubat', imsak: '06:15', gunes: '07:41', ogle: '13:23', ikindi: '16:26', aksam: '18:56', yatsi: '20:15' },
+            { day: 7, date: '25 Şubat', imsak: '06:13', gunes: '07:39', ogle: '13:23', ikindi: '16:28', aksam: '18:57', yatsi: '20:16' },
+            { day: 8, date: '26 Şubat', imsak: '06:11', gunes: '07:37', ogle: '13:23', ikindi: '16:29', aksam: '18:59', yatsi: '20:18' },
+            { day: 9, date: '27 Şubat', imsak: '06:10', gunes: '07:36', ogle: '13:22', ikindi: '16:31', aksam: '19:00', yatsi: '20:19' },
+            { day: 10, date: '28 Şubat', imsak: '06:08', gunes: '07:34', ogle: '13:22', ikindi: '16:32', aksam: '19:02', yatsi: '20:21' },
+            { day: 11, date: '1 Mart', imsak: '06:06', gunes: '07:32', ogle: '13:22', ikindi: '16:34', aksam: '19:03', yatsi: '20:22' },
+            { day: 12, date: '2 Mart', imsak: '06:05', gunes: '07:31', ogle: '13:22', ikindi: '16:35', aksam: '19:05', yatsi: '20:24' },
+            { day: 13, date: '3 Mart', imsak: '06:03', gunes: '07:29', ogle: '13:22', ikindi: '16:37', aksam: '19:06', yatsi: '20:25' },
+            { day: 14, date: '4 Mart', imsak: '06:01', gunes: '07:27', ogle: '13:21', ikindi: '16:38', aksam: '19:08', yatsi: '20:27' },
+            { day: 15, date: '5 Mart', imsak: '06:00', gunes: '07:26', ogle: '13:21', ikindi: '16:40', aksam: '19:09', yatsi: '20:28' },
+            { day: 16, date: '6 Mart', imsak: '05:58', gunes: '07:24', ogle: '13:21', ikindi: '16:41', aksam: '19:11', yatsi: '20:30' },
+            { day: 17, date: '7 Mart', imsak: '05:56', gunes: '07:22', ogle: '13:21', ikindi: '16:43', aksam: '19:12', yatsi: '20:31' },
+            { day: 18, date: '8 Mart', imsak: '05:54', gunes: '07:20', ogle: '13:20', ikindi: '16:44', aksam: '19:14', yatsi: '20:33' },
+            { day: 19, date: '9 Mart', imsak: '05:53', gunes: '07:19', ogle: '13:20', ikindi: '16:46', aksam: '19:15', yatsi: '20:34' },
+            { day: 20, date: '10 Mart', imsak: '05:51', gunes: '07:17', ogle: '13:20', ikindi: '16:47', aksam: '19:17', yatsi: '20:36' },
+            { day: 21, date: '11 Mart', imsak: '05:49', gunes: '07:15', ogle: '13:20', ikindi: '16:49', aksam: '19:18', yatsi: '20:37' },
+            { day: 22, date: '12 Mart', imsak: '05:47', gunes: '07:13', ogle: '13:19', ikindi: '16:50', aksam: '19:20', yatsi: '20:39' },
+            { day: 23, date: '13 Mart', imsak: '05:46', gunes: '07:12', ogle: '13:19', ikindi: '16:52', aksam: '19:21', yatsi: '20:40' },
+            { day: 24, date: '14 Mart', imsak: '05:44', gunes: '07:10', ogle: '13:19', ikindi: '16:53', aksam: '19:23', yatsi: '20:42' },
+            { day: 25, date: '15 Mart', imsak: '05:42', gunes: '07:08', ogle: '13:19', ikindi: '16:55', aksam: '19:24', yatsi: '20:43' },
+            { day: 26, date: '16 Mart', imsak: '05:40', gunes: '07:06', ogle: '13:18', ikindi: '16:56', aksam: '19:26', yatsi: '20:45', kadir: true },
+            { day: 27, date: '17 Mart', imsak: '05:39', gunes: '07:05', ogle: '13:18', ikindi: '16:58', aksam: '19:27', yatsi: '20:46' },
+            { day: 28, date: '18 Mart', imsak: '05:37', gunes: '07:03', ogle: '13:18', ikindi: '16:59', aksam: '19:29', yatsi: '20:48' },
+            { day: 29, date: '19 Mart', imsak: '05:35', gunes: '07:01', ogle: '13:17', ikindi: '17:01', aksam: '19:30', yatsi: '20:49', arefe: true }
+        ];
+
+        function getTodayRamazanDay() {
+            const today = new Date();
+            const ramazanStart = new Date(2026, 1, 19); // 19 Şubat 2026
+            const ramazanEnd = new Date(2026, 2, 19); // 19 Mart 2026
+            
+            if (today >= ramazanStart && today <= ramazanEnd) {
+                const diff = Math.floor((today - ramazanStart) / (1000 * 60 * 60 * 24));
+                return diff + 1;
+            }
+            
+            if (today < ramazanStart) {
+                return 0; // Ramazan henüz başlamadı
+            }
+            
+            return -1; // Ramazan bitti
+        }
+
+        function showCountdown() {
+            const today = new Date();
+            const ramazanStart = new Date(2026, 1, 19, 0, 0, 0);
+            const diff = ramazanStart - today;
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            return { days, hours, minutes };
+        }
+
+        function getTodayPrayerTimes() {
+            // Bugünün normal namaz vakitleri (18 Şubat 2026 için)
+            return {
+                date: '18 Şubat',
+                imsak: '06:23',
+                gunes: '07:48',
+                ogle: '13:23',
+                ikindi: '16:19',
+                aksam: '18:48',
+                yatsi: '20:08'
+            };
+        }
+
+        function showTodayCard() {
+            const todayDay = getTodayRamazanDay();
+            
+            if (todayDay === 0) {
+                // Ramazan başlamadı - Geri sayım + Bugünün vakitleri
+                const countdown = showCountdown();
+                const todayPrayer = getTodayPrayerTimes();
+                
+                document.getElementById('todayCard').innerHTML = `
+                    <div class="countdown-section">
+                        <div class="countdown-title">🌙 Ramazan'a</div>
+                        <div class="countdown-timer">
+                            <div class="countdown-item">
+                                <div class="countdown-number">${countdown.days}</div>
+                                <div class="countdown-label">Gün</div>
+                            </div>
+                            <div class="countdown-item">
+                                <div class="countdown-number">${countdown.hours}</div>
+                                <div class="countdown-label">Saat</div>
+                            </div>
+                            <div class="countdown-item">
+                                <div class="countdown-number">${countdown.minutes}</div>
+                                <div class="countdown-label">Dakika</div>
+                            </div>
+                        </div>
+                        <div class="countdown-date">19 Şubat 2026 Perşembe</div>
+                    </div>
+                    <div class="today-header" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(255,255,255,0.2);">
+                        <div class="today-title">BUGÜNÜN NAM AZ VAKİTLERİ</div>
+                        <div class="today-date">${todayPrayer.date} Çarşamba</div>
+                    </div>
+                    <div class="today-times">
+                        <div class="today-time highlight">
+                            <div class="today-time-label">İmsak</div>
+                            <div class="today-time-value">${todayPrayer.imsak}</div>
+                        </div>
+                        <div class="today-time">
+                            <div class="today-time-label">Güneş</div>
+                            <div class="today-time-value">${todayPrayer.gunes}</div>
+                        </div>
+                        <div class="today-time">
+                            <div class="today-time-label">Öğle</div>
+                            <div class="today-time-value">${todayPrayer.ogle}</div>
+                        </div>
+                        <div class="today-time">
+                            <div class="today-time-label">İkindi</div>
+                            <div class="today-time-value">${todayPrayer.ikindi}</div>
+                        </div>
+                        <div class="today-time">
+                            <div class="today-time-label">Akşam</div>
+                            <div class="today-time-value">${todayPrayer.aksam}</div>
+                        </div>
+                        <div class="today-time">
+                            <div class="today-time-label">Yatsı</div>
+                            <div class="today-time-value">${todayPrayer.yatsi}</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Her dakika geri sayımı güncelle
+                setInterval(() => {
+                    const newCountdown = showCountdown();
+                    document.querySelector('.countdown-timer').innerHTML = `
+                        <div class="countdown-item">
+                            <div class="countdown-number">${newCountdown.days}</div>
+                            <div class="countdown-label">Gün</div>
+                        </div>
+                        <div class="countdown-item">
+                            <div class="countdown-number">${newCountdown.hours}</div>
+                            <div class="countdown-label">Saat</div>
+                        </div>
+                        <div class="countdown-item">
+                            <div class="countdown-number">${newCountdown.minutes}</div>
+                            <div class="countdown-label">Dakika</div>
+                        </div>
+                    `;
+                }, 60000); // Her dakika güncelle
+                
+            } else if (todayDay > 0 && todayDay <= 29) {
+                // Ramazan devam ediyor
+                const todayData = ramazanData[todayDay - 1];
+                
+                let badgeClass = '';
+                if (todayData.kadir) badgeClass = 'kadir';
+                if (todayData.arefe) badgeClass = 'arefe';
+                
+                let title = todayData.date.toUpperCase();
+                if (todayData.kadir) title += ' - KADİR GECESİ';
+                if (todayData.arefe) title += ' - AREFE';
+                
+                document.getElementById('todayCard').innerHTML = `
+                    <div class="today-header">
+                        <div class="day-badge ${badgeClass}">${todayData.day}</div>
+                        <div class="today-title">${title}</div>
+                        <div class="today-date">Ramazan ${todayData.day}. Gün</div>
+                    </div>
+                    <div class="today-times">
+                        <div class="today-time highlight">
+                            <div class="today-time-label">İmsak</div>
+                            <div class="today-time-value">${todayData.imsak}</div>
+                        </div>
+                        <div class="today-time">
+                            <div class="today-time-label">Güneş</div>
+                            <div class="today-time-value">${todayData.gunes}</div>
+                        </div>
+                        <div class="today-time">
+                            <div class="today-time-label">Öğle</div>
+                            <div class="today-time-value">${todayData.ogle}</div>
+                        </div>
+                        <div class="today-time">
+                            <div class="today-time-label">İkindi</div>
+                            <div class="today-time-value">${todayData.ikindi}</div>
+                        </div>
+                        <div class="today-time highlight">
+                            <div class="today-time-label">Akşam (İftar)</div>
+                            <div class="today-time-value">${todayData.aksam}</div>
+                        </div>
+                        <div class="today-time">
+                            <div class="today-time-label">Yatsı</div>
+                            <div class="today-time-value">${todayData.yatsi}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Ramazan bitti
+                document.getElementById('todayCard').innerHTML = `
+                    <div class="today-header">
+                        <div class="today-title">🌙 RAMAZAN BAYRAMI MÜBAREK OLSUN</div>
+                        <div class="today-date">20-22 Mart 2026</div>
+                    </div>
+                `;
+            }
+        }
+
+        function showImsakiye() {
+            const todayDay = getTodayRamazanDay();
+            
+            const rowsHtml = ramazanData.map(day => `
+                <div class="day-row ${day.day === todayDay ? 'current-day' : ''}">
+                    <div class="day-cell">
+                        <span class="day-number">${day.day}</span>
+                        ${day.kadir ? '<span class="special-icon">⭐</span>' : ''}
+                        ${day.arefe ? '<span class="special-icon">🌙</span>' : ''}
+                    </div>
+                    <div class="day-cell time-cell">${day.imsak}</div>
+                    <div class="day-cell time-cell">${day.gunes}</div>
+                    <div class="day-cell time-cell">${day.ogle}</div>
+                    <div class="day-cell time-cell">${day.ikindi}</div>
+                    <div class="day-cell time-cell">${day.aksam}</div>
+                    <div class="day-cell time-cell">${day.yatsi}</div>
+                </div>
+            `).join('');
+            
+            document.getElementById('imsakiyeRows').innerHTML = rowsHtml;
+        }
+
+        // Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .catch(err => console.log('SW error:', err));
+        }
+
+        // Init
+        showTodayCard();
+        showImsakiye();
+    </script>
+</body>
+</html>
