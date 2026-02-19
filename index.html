@@ -340,6 +340,66 @@
                 font-size: 0.65rem;
             }
         }
+
+        /* Install Prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            background: rgba(30, 126, 52, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(150%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .install-prompt h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #ffd700;
+        }
+
+        .install-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+        }
+
+        .install-btn {
+            flex: 1;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .install-btn.primary {
+            background: #ffd700;
+            color: #155724;
+        }
+
+        .install-btn.secondary {
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -368,6 +428,16 @@
             <div>Yatsı</div>
         </div>
         <div id="imsakiyeRows"></div>
+    </div>
+
+    <!-- Install Prompt -->
+    <div class="install-prompt" id="installPrompt" style="display: none;">
+        <h3>📱 Ana Ekrana Ekle</h3>
+        <p style="font-size: 0.85rem; margin-bottom: 0;">Ramazan boyunca kolayca erişim için!</p>
+        <div class="install-buttons">
+            <button class="install-btn primary" id="installBtn">Ekle</button>
+            <button class="install-btn secondary" id="dismissInstall">Kapat</button>
+        </div>
     </div>
 
     <script>
@@ -607,6 +677,44 @@
             navigator.serviceWorker.register('./sw.js')
                 .catch(err => console.log('SW error:', err));
         }
+
+        // PWA Install
+        let deferredPrompt;
+
+        function showInstallPrompt() {
+            const dismissed = localStorage.getItem('installDismissed');
+            if (!dismissed) {
+                setTimeout(() => {
+                    document.getElementById('installPrompt').style.display = 'block';
+                }, 3000);
+            }
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            showInstallPrompt();
+        });
+
+        document.getElementById('installBtn').addEventListener('click', () => {
+            const installPrompt = document.getElementById('installPrompt');
+            installPrompt.style.display = 'none';
+            
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                });
+            } else {
+                // iOS için talimat
+                alert('iOS: Safari\'de Paylaş (⬆️) → "Ana Ekrana Ekle" butonuna tıklayın\n\nAndroid: Menü (⋮) → "Ana ekrana ekle" seçeneğini kullanın');
+            }
+        });
+
+        document.getElementById('dismissInstall').addEventListener('click', () => {
+            document.getElementById('installPrompt').style.display = 'none';
+            localStorage.setItem('installDismissed', 'true');
+        });
 
         // Init
         showTodayCard();
